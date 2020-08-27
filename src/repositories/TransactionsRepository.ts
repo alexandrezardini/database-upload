@@ -20,40 +20,34 @@ interface AllTransactions {
 @EntityRepository(Transaction)
 class TransactionsRepository extends Repository<Transaction> {
   public async getBalance(): Promise<Balance> {
-    // const transactionRepository = [getRepository(Transaction)];
+    const transactionRepository = getRepository(Transaction);
 
-    // const transactions = [transactionRepository];
+    const transactions = transactionRepository.find();
 
-    // const transactionsBalance = transactions.reduce(
-    //   (acc: Balance, cur: Transaction) => {
-    //     switch (cur.type) {
-    //       case 'income':
-    //         acc.income += cur.value;
-    //         break;
-    //       case 'outcome':
-    //         acc.outcome += cur.value;
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //     return acc;
-    //   },
-    //   {
-    //     income: 0,
-    //     outcome: 0,
-    //     total: 0,
-    //   },
-    // );
+    const { income, outcome } = (await transactions).reduce(
+      (acc, cur) => {
+        switch (cur.type) {
+          case 'income':
+            acc.income += cur.value;
+            break;
+          case 'outcome':
+            acc.outcome += cur.value;
+            break;
+          default:
+            break;
+        }
 
-    // return transactionsBalance
+        return acc;
+      },
+      {
+        income: 0,
+        outcome: 0,
+        total: 0,
+      },
+    );
+    const total = income - outcome;
 
-    const balance = {
-      income: 6000,
-      outcome: 5200,
-      total: 800,
-    };
-
-    return balance;
+    return { income, outcome, total };
   }
 
   public async all(): Promise<AllTransactions[]> {
