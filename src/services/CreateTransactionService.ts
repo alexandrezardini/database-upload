@@ -4,16 +4,11 @@ import { getRepository } from 'typeorm';
 import Transaction from '../models/Transaction';
 import Category from '../models/Category';
 
-interface InserteCategoryId {
-  id: string;
-}
-
 interface Request {
   title: string;
   value: number;
   type: 'income' | 'outcome';
   category: string;
-  category_id: InserteCategoryId;
 }
 
 class CreateTransactionService {
@@ -32,7 +27,20 @@ class CreateTransactionService {
     });
 
     if (checkCategoryExists) {
-      return null;
+      const categoryAll = await categoryRepository.find({
+        where: { title: category },
+      });
+
+      const transaction = transactionRepository.create({
+        title,
+        value,
+        type,
+        category_id: categoryAll[0].id,
+      });
+
+      await transactionRepository.save(transaction);
+
+      return transaction;
     }
 
     const InserteCategoryId = categoryRepository.create({
@@ -42,9 +50,6 @@ class CreateTransactionService {
     await categoryRepository.save(InserteCategoryId);
 
     const category_id = InserteCategoryId.id;
-
-    // return category;
-
     const transaction = transactionRepository.create({
       title,
       value,

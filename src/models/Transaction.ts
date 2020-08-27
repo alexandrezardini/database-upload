@@ -6,8 +6,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import Category from './Category';
-
 @Entity('transactions')
 class Transaction {
   @PrimaryGeneratedColumn('uuid')
