@@ -7,16 +7,16 @@ import TransactionsRepository from '../repositories/TransactionsRepository';
 
 interface Request {
   title: string;
-  value: number;
   type: 'income' | 'outcome';
+  value: number;
   category: string;
 }
 
 class CreateTransactionService {
   public async execute({
     title,
-    value,
     type,
+    value,
     category,
   }: Request): Promise<Transaction | null> {
     const transactionsRepository = getCustomRepository(TransactionsRepository);
@@ -44,8 +44,8 @@ class CreateTransactionService {
 
       const transaction = transactionsRepository.create({
         title,
-        value,
         type,
+        value,
         category_id: categoryAll[0].id,
       });
 
@@ -63,8 +63,8 @@ class CreateTransactionService {
     const category_id = InserteCategoryId.id;
     const transaction = transactionsRepository.create({
       title,
-      value,
       type,
+      value,
       category_id,
     });
 
