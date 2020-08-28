@@ -1,8 +1,9 @@
-import { getCustomRepository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 import { Router } from 'express';
 
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
+import ensureIsValidId from '../middlewares/ensureIsValidId';
 // import DeleteTransactionService from '../services/DeleteTransactionService';
 // import ImportTransactionsService from '../services/ImportTransactionsService';
 
@@ -30,14 +31,24 @@ transactionsRouter.post('/', async (request, response) => {
     category,
   });
 
-  // transaction.category = category;
-
   response.json(transaction);
 });
 
-transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
-});
+transactionsRouter.delete(
+  '/:id',
+  ensureIsValidId,
+  async (request, response) => {
+    const { id } = request.params;
+
+    const transactionsRepository = getCustomRepository(TransactionsRepository);
+
+    await transactionsRepository.find();
+
+    await transactionsRepository.delete({ id });
+
+    return response.status(204).send();
+  },
+);
 
 transactionsRouter.post('/import', async (request, response) => {
   // TODO
