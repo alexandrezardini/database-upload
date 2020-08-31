@@ -9,7 +9,7 @@ interface Request {
   title: string;
   type: 'income' | 'outcome';
   value: number;
-  category: string;
+  categoryTitle: string;
 }
 
 class CreateTransactionService {
@@ -17,7 +17,7 @@ class CreateTransactionService {
     title,
     type,
     value,
-    category,
+    categoryTitle,
   }: Request): Promise<Transaction | null> {
     const transactionsRepository = getCustomRepository(TransactionsRepository);
 
@@ -34,12 +34,12 @@ class CreateTransactionService {
     }
 
     const checkCategoryExists = await categoryRepository.findOne({
-      where: { title: category },
+      where: { title: categoryTitle },
     });
 
     if (checkCategoryExists) {
       const categoryAll = await categoryRepository.find({
-        where: { title: category },
+        where: { title: categoryTitle },
       });
 
       const transaction = transactionsRepository.create({
@@ -55,18 +55,19 @@ class CreateTransactionService {
       return transaction;
     }
 
-    const InserteCategoryId = categoryRepository.create({
-      title: category,
+    const category = categoryRepository.create({
+      title: categoryTitle,
     });
 
-    await categoryRepository.save(InserteCategoryId);
+    await categoryRepository.save(category);
 
-    const category_id = InserteCategoryId.id;
+    const category_id = category.id;
     const transaction = transactionsRepository.create({
       title,
       type,
       value,
       category_id,
+      category,
     });
 
     await transactionsRepository.save(transaction);
