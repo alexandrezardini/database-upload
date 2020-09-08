@@ -64,6 +64,8 @@ class TransactionsRepository extends Repository<Transaction> {
         value: item.value,
         type: item.type,
         category: category.find(cat => cat.id === item.category_id),
+        created_at: item.created_at,
+        updated_at: item.updated_at,
       };
     });
 
